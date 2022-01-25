@@ -1,37 +1,7 @@
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
-import Head from "next/head";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import appConfig from "../config.json";
-
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: "Poppins", sans-serif;
-      }
-      /* App fit Height */
-      html,
-      body,
-      #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */
-    `}</style>
-  );
-}
 
 function Titulo(props) {
   const Tag = props.tag || "h1";
@@ -51,16 +21,12 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
-  const username = "davimateus1";
+  const [username, setUsername] = useState("");
+  const root = useRouter();
+  const image = "https://avatars.githubusercontent.com/u/46856822?v=4";
 
   return (
     <>
-      <Head>
-        <title>Piececord</title>
-        <link rel="icon" type="image/x-icon" href="../img/favicon.ico"/>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      </Head>
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: "flex",
@@ -100,6 +66,10 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={function (event) {
+              event.preventDefault();
+              root.push("/chat");
+            }}
             styleSheet={{
               display: "flex",
               flexDirection: "column",
@@ -122,6 +92,13 @@ export default function PaginaInicial() {
               {appConfig.name}
             </Text>
             <TextField
+              required
+              placeholder="Informe seu usuário do Github"
+              value={username}
+              onChange={function (event) {
+                const valor = event.target.value;
+                setUsername(valor);
+              }}
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -170,7 +147,11 @@ export default function PaginaInicial() {
                 borderRadius: "50%",
                 marginBottom: "16px",
               }}
-              src={`https://github.com/${username}.png`}
+              src={
+                username.length > 2
+                  ? `https://github.com/${username}.png`
+                  : image
+              }
             />
             <Text
               variant="body4"
@@ -181,7 +162,7 @@ export default function PaginaInicial() {
                 borderRadius: "1000px",
               }}
             >
-              {username}
+              {username.length > 2 ? username : ""}
             </Text>
           </Box>
           {/* Photo Area */}

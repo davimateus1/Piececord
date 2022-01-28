@@ -159,7 +159,7 @@ export default function PaginaInicial() {
                 color: appConfig.theme.colors.neutrals[200],
                 backgroundColor: appConfig.theme.colors.neutrals[900],
                 padding: "3px 10px",
-                borderRadius: "1000px",
+                borderRadius: "10px",
               }}
             >
               {username.length > 2 ? username : ""}

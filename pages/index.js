@@ -3,6 +3,9 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import appConfig from "../config.json";
 
+import axios from "axios";
+import Link from "next/link";
+
 function Titulo(props) {
   const Tag = props.tag || "h1";
 
@@ -22,20 +25,8 @@ function Titulo(props) {
 
 export default function PaginaInicial() {
   const [username, setUsername] = useState("");
-  const [followers, setFollowers] = useState("");
   const root = useRouter();
   const image = "https://avatars.githubusercontent.com/u/46856822?v=4";
-
-  useEffect(() => {
-    fetch(`https://api.github.com/users/${username}`)
-      .then(async (response) => {
-        const data = await response.json();
-        setFollowers(data.followers);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [followers]);
 
   return (
     <>
@@ -92,7 +83,7 @@ export default function PaginaInicial() {
               marginBottom: "32px",
             }}
           >
-            <Titulo tag="h2">Bem vindo de volta!</Titulo>
+            <Titulo tag="h2">Bem vindo a Grand Line!</Titulo>
             <Text
               variant="body3"
               styleSheet={{
@@ -174,9 +165,25 @@ export default function PaginaInicial() {
                 borderRadius: "10px",
               }}
             >
-              {username.length > 2 ? username : ""}
-              <br />
-              {username.length > 2 ? `Followers: ${followers}` : ""}
+              {username.length > 2 ? (
+                <Text
+                  tag="a"
+                  href={`https://github.com/${username}`}
+                  target="_blank"
+                  styleSheet={{
+                    color: appConfig.theme.colors.neutrals[200],
+                    fontSize: "12px",
+                    textDecoration: "none",
+                    hover: {
+                      color: appConfig.theme.colors.primary[500],
+                    },
+                  }}
+                >
+                  {username}
+                </Text>
+              ) : (
+                ""
+              )}
             </Text>
           </Box>
           {/* Photo Area */}

@@ -6,21 +6,50 @@ import {
   Button,
   Icon,
 } from "@skynexui/components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { Bars } from "react-loading-icons";
 
 import appConfig from "../config.json";
+import { createClient } from "@supabase/supabase-js";
+import Link from "next/link";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxODY2MywiZXhwIjoxOTU4OTk0NjYzfQ.6zbGZhmdGLLD7HMQkXVecSfOmMZVQOF92qv0aYp6TZw";
+const SUPABASE_URL = "https://egyyqmydgzrkncfpijid.supabase.co";
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      supabaseClient
+        .from("messages")
+        .select("*")
+        .order("id", { ascending: false })
+        .then(({ data }) => {
+          setChat(data);
+        });
+      setLoading(false);
+    }, 3000);
+  }, []);
 
   function handleNewMessage(newMessage) {
     const mess = {
-      id: chat.length,
+      // id: chat.length,
       from: "davimateus1",
       text: newMessage,
     };
-    setChat([mess, ...chat]);
+
+    supabaseClient
+      .from("messages")
+      .insert([mess])
+      .then(({ data }) => {
+        setChat([data[0], ...chat]);
+      });
     setMessage("");
   }
 
@@ -76,7 +105,24 @@ export default function ChatPage() {
             webkitBackdropFilter: "blur(2.6px)",
           }}
         >
-          <MessageList chatMessages={chat} setChat={setChat} />
+          {loading ? (
+            <Box
+              styleSheet={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%",
+              }}
+            >
+              <Bars
+                fill={appConfig.theme.colors.primary["900"]}
+                height="16px"
+              />
+            </Box>
+          ) : (
+            <MessageList chatMessages={chat} setChat={setChat} />
+          )}
 
           <Box
             as="form"
@@ -147,7 +193,7 @@ function Header() {
             color: appConfig.theme.colors.primary[200],
           }}
         >
-          Chat:
+          Piececord - Chat:
         </Text>
         <Button
           variant="tertiary"
@@ -206,9 +252,22 @@ function MessageList(props) {
                   display: "inline-block",
                   marginRight: "8px",
                 }}
-                src={`https://github.com/davimateus1.png`}
+                src={`https://github.com/${message.from}.png`}
               />
-              <Text tag="strong">{message.from}</Text>
+              <Text
+                tag="a"
+                href={`https://github.com/${message.from}`}
+                target="_blank"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals[200],
+                  textDecoration: "none",
+                  hover: {
+                    color: appConfig.theme.colors.primary[500],
+                  },
+                }}
+              >
+                {message.from}
+              </Text>
               <Text
                 styleSheet={{
                   fontSize: "10px",
@@ -217,7 +276,10 @@ function MessageList(props) {
                 }}
                 tag="span"
               >
-                {new Date().toLocaleDateString()}
+                {new Date(message.created_at).toLocaleString("pt-BR", {
+                  dateStyle: "short",
+                  timeStyle: "short",
+                })}
               </Text>
               <Icon
                 styleSheet={{

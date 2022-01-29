@@ -34,11 +34,12 @@ function GlobalStyle() {
 export default function MyApp({ Component, pageProps }) {
   return (
     <>
-      <GlobalStyle />
       <Head>
+        <meta charSet="utf-8" />
+        <link rel="icon" href="../public/favicon.ico" />
         <title>Piececord</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
+      <GlobalStyle />
       <Component {...pageProps} />
     </>
   );

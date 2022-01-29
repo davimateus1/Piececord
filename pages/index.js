@@ -1,6 +1,6 @@
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import appConfig from "../config.json";
 
 function Titulo(props) {
@@ -22,8 +22,20 @@ function Titulo(props) {
 
 export default function PaginaInicial() {
   const [username, setUsername] = useState("");
+  const [followers, setFollowers] = useState("");
   const root = useRouter();
   const image = "https://avatars.githubusercontent.com/u/46856822?v=4";
+
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${username}`)
+      .then(async (response) => {
+        const data = await response.json();
+        setFollowers(data.followers);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [followers]);
 
   return (
     <>
@@ -163,6 +175,8 @@ export default function PaginaInicial() {
               }}
             >
               {username.length > 2 ? username : ""}
+              <br />
+              {username.length > 2 ? `Followers: ${followers}` : ""}
             </Text>
           </Box>
           {/* Photo Area */}

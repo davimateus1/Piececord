@@ -3,9 +3,6 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import appConfig from "../config.json";
 
-import axios from "axios";
-import Link from "next/link";
-
 function Titulo(props) {
   const Tag = props.tag || "h1";
 
@@ -24,9 +21,23 @@ function Titulo(props) {
 }
 
 export default function PaginaInicial() {
+  const [github, setGithub] = useState("");
   const [username, setUsername] = useState("");
   const root = useRouter();
   const image = "https://avatars.githubusercontent.com/u/46856822?v=4";
+
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${username}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((result) => {
+        setGithub(result);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [username]);
 
   return (
     <>
@@ -185,6 +196,28 @@ export default function PaginaInicial() {
                 ""
               )}
             </Text>
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals["200"],
+                  padding: "3px 10px",
+                  borderRadius: "1000px",
+                  marginTop: "8px",
+                }}
+              >
+                {username.length > 2 ? github.location : ""}
+              </Text>
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals["200"],
+                  padding: "3px 10px",
+                  borderRadius: "1000px",
+                  marginTop: "8px",
+                }}
+              >
+                {username.length > 2 ? `Followers: ${github.followers}`: ""}
+              </Text>
           </Box>
           {/* Photo Area */}
         </Box>

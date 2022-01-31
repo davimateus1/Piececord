@@ -82,7 +82,7 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={function (event) {
               event.preventDefault();
-              root.push("/chat");
+              root.push(`/chat?username=${username}`);
             }}
             styleSheet={{
               display: "flex",
@@ -190,7 +190,7 @@ export default function PaginaInicial() {
                     },
                   }}
                 >
-                  {username}
+                  {github.name}
                 </Text>
               ) : (
                 ""

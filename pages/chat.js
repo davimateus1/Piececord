@@ -7,12 +7,12 @@ import {
   Icon,
 } from "@skynexui/components";
 import React, { useEffect, useState } from "react";
-
 import { Bars } from "react-loading-icons";
+import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/router";
 
 import appConfig from "../config.json";
-import { createClient } from "@supabase/supabase-js";
-import Link from "next/link";
+import { ButtonSendSticker } from "../src/components/ButtonSendSticker";
 
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzQxODY2MywiZXhwIjoxOTU4OTk0NjYzfQ.6zbGZhmdGLLD7HMQkXVecSfOmMZVQOF92qv0aYp6TZw";
@@ -20,9 +20,21 @@ const SUPABASE_URL = "https://egyyqmydgzrkncfpijid.supabase.co";
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
+  const root = useRouter();
+  const userLogged = root.query.username;
+
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  function catchMessageRealTime(addMessage) {
+    return supabaseClient
+      .from("messages")
+      .on("INSERT", (data) => {
+        addMessage(data.new);
+      })
+      .subscribe();
+  }
 
   useEffect(() => {
     setTimeout(() => {
@@ -34,22 +46,25 @@ export default function ChatPage() {
           setChat(data);
         });
       setLoading(false);
+
+      catchMessageRealTime((newMessage) => {
+        setChat((actualValue) => {
+          return [newMessage, ...actualValue];
+        });
+      });
     }, 3000);
   }, []);
 
   function handleNewMessage(newMessage) {
     const mess = {
-      // id: chat.length,
-      from: "davimateus1",
+      from: userLogged,
       text: newMessage,
     };
 
     supabaseClient
       .from("messages")
       .insert([mess])
-      .then(({ data }) => {
-        setChat([data[0], ...chat]);
-      });
+      .then(({}) => {});
     setMessage("");
   }
 
@@ -156,6 +171,11 @@ export default function ChatPage() {
                 color: appConfig.theme.colors.neutrals[200],
               }}
             />
+            <ButtonSendSticker
+              onStickerClick={(sticker) => {
+                handleNewMessage(":sticker:" + sticker);
+              }}
+            />
             <Button
               variant="primary"
               colorVariant="positive"
@@ -222,7 +242,7 @@ function MessageList(props) {
         flex: 1,
         color: appConfig.theme.colors.neutrals["000"],
         marginBottom: "16px",
-        overflow: "hidden",
+        overflowX: "hidden",
       }}
     >
       {props.chatMessages.map((message) => {
@@ -302,7 +322,15 @@ function MessageList(props) {
                 colorVariant="neutral"
               />
             </Box>
-            {message.text}
+            {message.text.startsWith(":sticker:") ? (
+              <Image
+                src={message.text.replace(":sticker:", "")}
+                width="150"
+                height="150"
+              />
+            ) : (
+              message.text
+            )}
           </Text>
         );
       })}

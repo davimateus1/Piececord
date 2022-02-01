@@ -22,10 +22,15 @@
 <p align="center">
   <img alt="Happy" src="https://user-images.githubusercontent.com/66326378/151872923-4a13b2b0-e359-4ecf-96fb-b68ef20fc7a9.png" width="100%">
 </p>
+<h2>🖥️ Tela de Erro 404: </h2>
+<p align="center">
+  <img alt="Happy" src="https://user-images.githubusercontent.com/66326378/151897824-3473e456-e99f-43de-86b4-5e9d04815a03.png" width="100%">
+</p>
 <h2>🖥️ Telas responsivas: </h2>
 <p float="left" align="center">
   <img src="https://user-images.githubusercontent.com/66326378/151873145-f1f6d747-5c5d-4d66-abf7-8f3ad22000e2.png" width="18%" /> 
   <img src="https://user-images.githubusercontent.com/66326378/151873137-a44762f9-a052-441c-8de3-b1e39fed2a5d.png" width="22%" />
+  <img src="https://user-images.githubusercontent.com/66326378/151897706-652fd895-bfc1-4406-8272-6e6c1fab703a.png" width="18%" />
 </p>
 
 <br>
